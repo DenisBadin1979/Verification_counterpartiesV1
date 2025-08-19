@@ -1,0 +1,17 @@
+email: denisbadin@yandex.ru
+password: u=55FX=AY^!ngPi
+
+https://dadata.ru/api/find-party/#authorization_popup
+
+# https://github.com/hflabs/dadata-py
+
+from dadata import Dadata
+token = "6524fe79cd1bc844f004d4076bbb5efb4f54355f"
+dadata = Dadata(token)
+result = dadata.find_by_id("party", "7707083893")
+Укажите при вызове:
+
+Content-Type: application/json.
+Accept: application/json.
+6524fe79cd1bc844f004d4076bbb5efb4f54355f — API-ключ.
+Тело запроса передавайте в кодировке UTF-8.
