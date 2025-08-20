@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 def translation_conragents (file_pah):
     """Функция, которая формирует из готового excel файла данные в список словарей, возвращает список словарей"""
     df = pd.read_excel(file_pah)
