@@ -1,19 +1,26 @@
 # https://github.com/hflabs/dadata-py
-
+import pandas as pd
 from dadata import Dadata
+
+from kontragets import translation_conragents
+
 """Запрос на сервисе Дадата , возвращает данные по одному контрагенту"""
-def zapros_min (inn):
+def zapros_min (pth_fl):
     token = "6524fe79cd1bc844f004d4076bbb5efb4f54355f"
     dadata = Dadata(token)
-    result = dadata.find_by_id( "party",inn)
-    cont_dict = {}
-    if not result:
-        cont_dict = {'Контрагент' : 'Данные не найдены'}
-    else:
-        c_inn = result[0]
-        if c_inn['data']['type'] == 'LEGAL':
-
-            cont_dict = {'Контрагент': c_inn.get('value'),
+    lit_cont = translation_conragents(pth_fl)
+    list_cont = []
+    for i_cont in lit_cont:
+        inn = i_cont['ИНН']
+        result = dadata.find_by_id( "party",inn)
+        cont_dict = {}
+        if not result:
+            cont_dict = {'Контрагент' : 'Данные не найдены'}
+        else:
+            c_inn = result[0]
+            if c_inn['data']['type'] == 'LEGAL':
+                print(c_inn)
+                cont_dict = {'Контрагент': c_inn.get('value'),
                          'ИНН': c_inn['data']['inn'],
                          'ОГРН': c_inn['data']['ogrn'],
                          'Статус' : c_inn['data']['state']['status'],
@@ -26,9 +33,9 @@ def zapros_min (inn):
                          'Основной Код ОКВЭД' : c_inn['data']['okved'],
                          'Адрес организации' : c_inn['data']['address']['value'],
                          'Дата последних изменений': c_inn['data']['state']['actuality_date'],}
-        elif c_inn['data']['type'] == 'INDIVIDUAL':
-
-            cont_dict = {'Контрагент': c_inn.get('value'),
+            elif c_inn['data']['type'] == 'INDIVIDUAL':
+                print(c_inn)
+                cont_dict = {'Контрагент': c_inn.get('value'),
                          'ИНН': c_inn['data']['inn'],
                          'ОГРН': c_inn['data']['ogrn'],
                          'Статус': c_inn['data']['state']['status'],
@@ -38,10 +45,18 @@ def zapros_min (inn):
                          'Основной Код ОКВЭД': c_inn['data']['okved'],
                          'Адрес организации': c_inn['data']['address']['value'],
                          'Дата последних изменений': c_inn['data']['state']['actuality_date'], }
-    return cont_dict
+        list_cont.append(cont_dict)
+    df = pd.DataFrame(list_cont)
+    df['Дата вступления в должность'] = pd.to_datetime(df['Дата вступления в должность'], unit='ms')
+    df['Дата регистрации'] = pd.to_datetime(df['Дата регистрации'], unit='ms')
+    df['Дата ликвидации'] = pd.to_datetime(df['Дата ликвидации'], unit='ms')
+    df['Дата последних изменений'] = pd.to_datetime(df['Дата последних изменений'], unit='ms')
+
+
+
+    return df
 
 if __name__ == "__main__":
-    cp_inn = zapros_min('027318179556')
+    ff = zapros_min('data/kont2.xlsx')
 
-
-    print (cp_inn)
+    ff.to_excel('data/gotov.xlsx', index=False)

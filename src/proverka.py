@@ -22,7 +22,7 @@ def proverka_cont (pth_fl):
 
 
 if __name__ == '__main__':
-    ff = proverka_cont('data/kont.xlsx')
+    ff = proverka_cont('data/kont2.xlsx')
 
     ff.to_excel('data/gotov.xlsx', index=False)
 
